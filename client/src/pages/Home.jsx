@@ -4,10 +4,12 @@ export default function Home() {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-      fetch("/api/data")
+      fetch("/api")
         .then((res) => res.json())
         .then((data) => setData(data.message));
     }, []);
+
+    
   return (
     <div className="App">
       <header className="App-header">

@@ -18,39 +18,39 @@ admin.initializeApp({
 const db = admin.firestore();
 
 // Have Node serve the files for our built React app
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+app.use(express.static(path.resolve(__dirname, '../client/public')));
 app.use(express.json())
 
 // Route for getting data from firestore
-app.get('/api/data/:id', (req, res) => {
-    const docId = req.params.id;
-    const docRef = db.collection('data').doc(docId);
+// app.get('/api/data/:id', (req, res) => {
+//     const docId = req.params.id;
+//     const docRef = db.collection('data').doc(docId);
   
-    docRef.get()
-      .then(doc => {
-        if (doc.exists) {
-          res.json(doc.data());
-        } else {
-          res.status(404).json({ error: 'Document not found' });
-        }
-      })
-      .catch(error => {
-        res.status(500).json({ error: error.message });
-      });
-  });
+//     docRef.get()
+//       .then(doc => {
+//         if (doc.exists) {
+//           res.json(doc.data());
+//         } else {
+//           res.status(404).json({ error: 'Document not found' });
+//         }
+//       })
+//       .catch(error => {
+//         res.status(500).json({ error: error.message });
+//       });
+//   });
   
   // Route for setting data in firestore
-  app.post('/api/data', (req, res) => {
-    const newData = req.body;
+  // app.post('/api/data', (req, res) => {
+  //   const newData = req.body;
   
-    db.collection('data').add(newData)
-      .then(docRef => {
-        res.json({ id: docRef.id });
-      })
-      .catch(error => {
-        res.status(500).json({ error: error.message });
-      });
-  });
+  //   db.collection('data').add(newData)
+  //     .then(docRef => {
+  //       res.json({ id: docRef.id });
+  //     })
+  //     .catch(error => {
+  //       res.status(500).json({ error: error.message });
+  //     });
+  // });
 
 // Handle GET requests to the /api route
 app.get("/api", (req, res) => {
@@ -59,7 +59,7 @@ app.get("/api", (req, res) => {
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, '../client/public', 'index.html'));
 });
 
 app.listen(PORT, () => {
