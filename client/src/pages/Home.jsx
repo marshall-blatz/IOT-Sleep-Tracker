@@ -1,19 +1,21 @@
 import {React, useState, useEffect} from 'react'
+import { getUserAlarms } from '../interfaces/alarmInterface';
 
 export default function Home() {
-    const [data, setData] = useState(null);
+    const [alarms, setAlarms] = useState(null);
 
     useEffect(() => {
-      fetch("/api")
-        .then((res) => res.json())
-        .then((data) => setData(data.message));
+      getUserAlarms("cfHTvZ3S41FWKmVZT8ZX").then(data => {
+        console.log(data)
+        setAlarms(data)
+      })
     }, []);
 
-    
+
   return (
     <div className="App">
       <header className="App-header">
-        <p>{!data ? "Loading..." : data}</p>
+        
       </header>
     </div>
   )
