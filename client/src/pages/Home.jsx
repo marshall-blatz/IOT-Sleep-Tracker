@@ -3,8 +3,11 @@ import { getUserAlarms } from '../interfaces/alarmInterface';
 import { Box, Button, Typography, TableRow, TableCell, Stack, TableContainer, Table, TableBody, Switch, Divider, tableCellClasses, CircularProgress } from '@mui/material'
 import AlarmDialog from '../dialogs/alarmDialog';
 import { getFirstName } from '../interfaces/userInterface';
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Home() {
+
+    const { currentUser } = useAuth();
     const [alarms, setAlarms] = useState([]);
     const [firstName, setFirstName] = useState("")
     const [loading, setLoading] = useState(true)
@@ -15,10 +18,10 @@ export default function Home() {
         setAlarms(data)
         setLoading(false)
       })
-      getFirstName("cfHTvZ3S41FWKmVZT8ZX").then(data => {
+      getFirstName(currentUser.uid).then(data => {
         setFirstName(data)
       })
-    }, []);
+    }, [currentUser]);
 
 
     const renderAlarms = () => {
