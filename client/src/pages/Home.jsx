@@ -4,10 +4,12 @@ import { Box, Button, Typography, TableRow, TableCell, Stack, TableContainer, Ta
 import AlarmDialog from '../dialogs/alarmDialog';
 import { getFirstName } from '../interfaces/userInterface';
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
 
-    const { currentUser } = useAuth();
+    const { currentUser, logout, setError } = useAuth();
+    const navigate = useNavigate();
     const [alarms, setAlarms] = useState([]);
     const [firstName, setFirstName] = useState("")
     const [loading, setLoading] = useState(true)
@@ -22,6 +24,16 @@ export default function Home() {
         setFirstName(data)
       })
     }, [currentUser]);
+
+    async function handleLogout() {
+      try {
+        setError("");
+        await logout();
+        navigate("/login");
+      } catch {
+        setError("Failed to logout");
+      }
+    }
 
 
     const renderAlarms = () => {
@@ -69,6 +81,7 @@ export default function Home() {
                           <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important" }}>
                             <Box sx={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
                               <Typography>Hello, {firstName}</Typography>
+                              <Button variant="contained" onClick={() => handleLogout()} sx={{padding:"2px 5px", textTransform:"none"}}>Logout</Button>
                               <Button variant="contained" onClick={() => setDialog(true)} sx={{padding:"2px 5px", textTransform:"none"}}>Add Alarm</Button>
                             </Box>
                             <Typography variant="h3">Alarms</Typography>
