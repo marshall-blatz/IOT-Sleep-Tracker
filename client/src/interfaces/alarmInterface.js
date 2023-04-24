@@ -22,11 +22,12 @@ export const createAlarm = async (userId, title, startTime, endTime) => {
     if (alarmId === "") return;
     await deleteDoc(doc(db, "Alarms", alarmId));
     console.log(`Alarm ${alarmId} has been deleted`)
-    return
+    window.location.reload()
   }
 
 
 export const getUserAlarms = async (userId) => {
+    console.log("getting user alarms")
     let alarms = []
     const alarmsRef = collection(db, "Alarms");
     const q = query(alarmsRef, where("userId", "==", userId), orderBy("endTime")); 
@@ -37,6 +38,5 @@ export const getUserAlarms = async (userId) => {
       alarms[id] = doc.data()
       //console.log(doc.id, " => ", doc.data());
     });
-
     return alarms
   }

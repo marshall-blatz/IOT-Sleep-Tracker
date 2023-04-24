@@ -12,20 +12,14 @@ export default function Home() {
     const [dialog, setDialog] = useState(false)
 
     useEffect(() => {
-      let ignore = false;
-      if(!ignore){
-        getUserAlarms("cfHTvZ3S41FWKmVZT8ZX").then(data => {
-          setAlarms(data)
-          setLoading(false)
-        })
-        getFirstName("cfHTvZ3S41FWKmVZT8ZX").then(data => {
-          setFirstName(data)
-        })
-      }
-      return () => {
-        ignore = true;
-      };
-    }, [alarms]);
+      getUserAlarms("kqdSCMB0ilur5daBOlzF").then(alarms => {
+        setAlarms(alarms)
+        setLoading(false)
+      })
+      getFirstName("kqdSCMB0ilur5daBOlzF").then(name => {
+        setFirstName(name)
+      })
+    }, []);
 
 
     const renderAlarms = () => {
@@ -51,10 +45,12 @@ export default function Home() {
                   <Typography variant="h4">{formatTimeToAmPm(alarms[key].startTime.seconds)} to {formatTimeToAmPm(alarms[key].endTime.seconds)}</Typography>
                   <Typography>{alarms[key].alarmName}</Typography>
                 </Box>
-                <Switch />
-                <IconButton onClick={() => handleDeleteAlarm(key)}>
-                  <ClearIcon color="primary"/>
-                </IconButton>
+                <Box>
+                  <Switch />
+                  <IconButton onClick={() => handleDeleteAlarm(key)}>
+                    <ClearIcon color="primary"/>
+                  </IconButton>
+                </Box>
               </Box>
             </TableCell>
           </TableRow>
@@ -85,7 +81,7 @@ export default function Home() {
     }
 
   return (
-    <Box sx={{backgroundColor:"#282c34", minHeight:"100vh", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+    <Box sx={{backgroundColor:"#282c34", minHeight:"100vh", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", pb:"100px"}}>
       {
         loading?
         <CircularProgress/>
@@ -96,7 +92,7 @@ export default function Home() {
                 <Table sx={{[`& .${tableCellClasses.root}`]: {borderBottom: "none"}}}>
                     <TableBody>
                         <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, overflow: "visible !important" }}>
-                          <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important", minWidth:"350px"}}>
+                          <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important", minWidth:"400px"}}>
                             <Box sx={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
                               <Typography>Hello, {firstName}</Typography>
                               <Button variant="contained" onClick={() => setDialog(true)} sx={{padding:"2px 5px", textTransform:"none"}}>Add Alarm</Button>

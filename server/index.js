@@ -52,6 +52,12 @@ app.use(express.json())
   //     });
   // });
 
+// Handle Toggle on alarms
+app.get('/api/alarm/on/:id', (req, res) => {
+    const alarmId = req.params.id;
+    console.log(req.params.id)
+  });
+
 // Handle GET requests to the /api route
 app.get("/api", (req, res) => {
     res.json({ message: "Hello from server!" });
