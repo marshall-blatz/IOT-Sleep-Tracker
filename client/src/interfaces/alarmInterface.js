@@ -1,5 +1,5 @@
 import { db } from "../config/firebase";
-import { addDoc, query, where, getDocs, collection, orderBy } from "firebase/firestore";
+import { doc, deleteDoc, addDoc, query, where, getDocs, collection, orderBy } from "firebase/firestore";
 
 export const createAlarm = async (userId, title, startTime, endTime) => {
     if (userId === "") return;
@@ -17,6 +17,13 @@ export const createAlarm = async (userId, title, startTime, endTime) => {
       console.error("Error adding alarm: ", e);
     }
   };
+
+  export const deleteAlarm = async (alarmId) => {
+    if (alarmId === "") return;
+    await deleteDoc(doc(db, "Alarms", alarmId));
+    console.log(`Alarm ${alarmId} has been deleted`)
+    return
+  }
 
 
 export const getUserAlarms = async (userId) => {

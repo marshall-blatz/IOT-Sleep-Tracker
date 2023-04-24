@@ -1,6 +1,7 @@
 import {React, useState, useEffect} from 'react'
-import { getUserAlarms } from '../interfaces/alarmInterface';
-import { Box, Button, Typography, TableRow, TableCell, Stack, TableContainer, Table, TableBody, Switch, Divider, tableCellClasses, CircularProgress } from '@mui/material'
+import { deleteAlarm, getUserAlarms } from '../interfaces/alarmInterface';
+import { Box, Button, Typography, TableRow, TableCell, Stack, TableContainer, Table, TableBody, Switch, Divider, tableCellClasses, CircularProgress, IconButton } from '@mui/material'
+import ClearIcon from '@mui/icons-material/Clear';
 import AlarmDialog from '../dialogs/alarmDialog';
 import { getFirstName } from '../interfaces/userInterface';
 
@@ -11,31 +12,58 @@ export default function Home() {
     const [dialog, setDialog] = useState(false)
 
     useEffect(() => {
-      getUserAlarms("cfHTvZ3S41FWKmVZT8ZX").then(data => {
-        setAlarms(data)
-        setLoading(false)
-      })
-      getFirstName("cfHTvZ3S41FWKmVZT8ZX").then(data => {
-        setFirstName(data)
-      })
-    }, []);
+      let ignore = false;
+      if(!ignore){
+        getUserAlarms("cfHTvZ3S41FWKmVZT8ZX").then(data => {
+          setAlarms(data)
+          setLoading(false)
+        })
+        getFirstName("cfHTvZ3S41FWKmVZT8ZX").then(data => {
+          setFirstName(data)
+        })
+      }
+      return () => {
+        ignore = true;
+      };
+    }, [alarms]);
 
 
     const renderAlarms = () => {
-      return(Object.keys(alarms).map(key => (
-        <TableRow key={key} sx={{}}>
-          <TableCell component="th" scope="row" sx={{padding:"16px 16px 0 16px"}}>
-            <Divider color="white" sx={{mb:"20px"}}/>
-            <Box sx={{display:"flex", flexDirection:"row", alignItems:"center", justifyContent:"space-between"}}>
-              <Box sx={{color:"white", mr:"40px"}}>
-                <Typography variant="h4">{formatTimeToAmPm(alarms[key].startTime.seconds)} to {formatTimeToAmPm(alarms[key].endTime.seconds)}</Typography>
-                <Typography>{alarms[key].alarmName}</Typography>
+      if (Object.keys(alarms).length === 0){
+        return(
+          <TableRow>
+            <TableCell>
+              <Divider color="white" sx={{mb:"20px"}}/>
+              <Box sx={{display:"flex", justifyContent:"center", color:"white"}}>
+                <Typography>You have no alarms yet</Typography>
               </Box>
-              <Switch />
-            </Box>
-          </TableCell>
-        </TableRow>
-      )))
+            </TableCell>
+          </TableRow>
+        )
+      }
+      else {
+        return(Object.keys(alarms).map(key => (
+          <TableRow key={key} sx={{}}>
+            <TableCell component="th" scope="row" sx={{padding:"16px 16px 0 16px"}}>
+              <Divider color="white" sx={{mb:"20px"}}/>
+              <Box sx={{display:"flex", flexDirection:"row", alignItems:"center", justifyContent:"space-between"}}>
+                <Box sx={{color:"white", mr:"40px"}}>
+                  <Typography variant="h4">{formatTimeToAmPm(alarms[key].startTime.seconds)} to {formatTimeToAmPm(alarms[key].endTime.seconds)}</Typography>
+                  <Typography>{alarms[key].alarmName}</Typography>
+                </Box>
+                <Switch />
+                <IconButton onClick={() => handleDeleteAlarm(key)}>
+                  <ClearIcon color="primary"/>
+                </IconButton>
+              </Box>
+            </TableCell>
+          </TableRow>
+        )))
+      }
+    }
+
+    async function handleDeleteAlarm(alarmId) {
+      await deleteAlarm(alarmId)
     }
 
     function formatTimeToAmPm(timestamp) {
@@ -52,18 +80,23 @@ export default function Home() {
       return `${formattedHours}:${formattedMinutes}${amPm}`;
     }
 
+    const handleSignOut = () => {
+      console.log("Put sign out logic here")
+    }
+
   return (
     <Box sx={{backgroundColor:"#282c34", minHeight:"100vh", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
       {
         loading?
         <CircularProgress/>
         :
+        <>
         <Stack>
             <TableContainer>
                 <Table sx={{[`& .${tableCellClasses.root}`]: {borderBottom: "none"}}}>
                     <TableBody>
                         <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, overflow: "visible !important" }}>
-                          <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important" }}>
+                          <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important", minWidth:"350px"}}>
                             <Box sx={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
                               <Typography>Hello, {firstName}</Typography>
                               <Button variant="contained" onClick={() => setDialog(true)} sx={{padding:"2px 5px", textTransform:"none"}}>Add Alarm</Button>
@@ -76,6 +109,8 @@ export default function Home() {
                 </Table>
             </TableContainer>
         </Stack>
+        <Button onClick={handleSignOut} sx={{textDecoration:"underline", textTransform:"none"}}>Sign out</Button>
+        </>
       }
       <AlarmDialog dialog={dialog} setDialog={setDialog}/>
     </Box>
