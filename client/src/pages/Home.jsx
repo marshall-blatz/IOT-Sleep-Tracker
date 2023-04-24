@@ -26,7 +26,7 @@ export default function Home() {
       })
     }, [currentUser]);
 
-    async function handleLogout() {
+    async function handleSignOut() {
       try {
         setError("");
         await logout();
@@ -90,10 +90,6 @@ export default function Home() {
       await deleteAlarm(alarmId)
     }
 
-    const handleSignOut = () => {
-      console.log("Put sign out logic here")
-    }
-
     async function toggleAlarm(alarmId, status){
       //check if toggling on or off
       await setAlarmToggle(alarmId, status)
@@ -120,7 +116,6 @@ export default function Home() {
                           <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important", minWidth:"400px"}}>
                             <Box sx={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
                               <Typography>Hello, {firstName}</Typography>
-                              <Button variant="contained" onClick={() => handleLogout()} sx={{padding:"2px 5px", textTransform:"none"}}>Logout</Button>
                               <Button variant="contained" onClick={() => setDialog(true)} sx={{padding:"2px 5px", textTransform:"none"}}>Add Alarm</Button>
                             </Box>
                             <Typography variant="h3">Alarms</Typography>
