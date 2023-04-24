@@ -73,6 +73,7 @@ export default function Signup() {
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
+                restingBpm: 70,
             });
         // Call the /api/signup route with email and password
         // const response = await fetch('/api/signup', {
