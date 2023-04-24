@@ -1,5 +1,5 @@
 import {React, useState, useEffect} from 'react'
-import { deleteAlarm, getUserAlarms } from '../interfaces/alarmInterface';
+import { deleteAlarm, getUserAlarms, setAlarmToggle } from '../interfaces/alarmInterface';
 import { Box, Button, Typography, TableRow, TableCell, Stack, TableContainer, Table, TableBody, Switch, Divider, tableCellClasses, CircularProgress, IconButton } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear';
 import AlarmDialog from '../dialogs/alarmDialog';
@@ -45,7 +45,7 @@ export default function Home() {
                   <Typography>{alarms[key].alarmName}</Typography>
                 </Box>
                 <Box>
-                  <Switch onChange={(event) => toggleAlarm(key, event.target.checked)}/>
+                  <Switch defaultChecked={alarms[key].isActive} onChange={(event) => toggleAlarm(key, event.target.checked)}/>
                   <IconButton onClick={() => handleDeleteAlarm(key)}>
                     <ClearIcon color="primary"/>
                   </IconButton>
@@ -79,8 +79,9 @@ export default function Home() {
       console.log("Put sign out logic here")
     }
 
-    function toggleAlarm(alarmId, status){
+    async function toggleAlarm(alarmId, status){
       //check if toggling on or off
+      await setAlarmToggle(alarmId, status)
       if(status){
         fetch(`/api/alarm/on/${alarmId}`)
       }
