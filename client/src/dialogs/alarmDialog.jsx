@@ -28,7 +28,7 @@ export default function AlarmDialog(props) {
             setTimeError(true)
             return
         }
-        await createAlarm("cfHTvZ3S41FWKmVZT8ZX", alarmName, startTime, endTime,)
+        await createAlarm("kqdSCMB0ilur5daBOlzF", alarmName, startTime, endTime,)
         handleClose()
         window.location.reload();
     }
