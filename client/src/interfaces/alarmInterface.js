@@ -22,15 +22,13 @@ export const createAlarm = async (userId, title, startTime, endTime) => {
   export const getUserAlarms = async (userId) => {
     let alarms = []
     const alarmsRef = collection(db, "Alarms");
-    const q = query(alarmsRef, where("userId", '==', userId)); 
-    console.log("hello")
+    const q = query(alarmsRef, where("userId", "==", userId), orderBy("endTime")); 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-        console.log("hiya")
       // doc.data() is never undefined for query doc snapshots
       let id = doc.id
       alarms[id] = doc.data()
-      console.log(doc.id, " => ", doc.data());
+      //console.log(doc.id, " => ", doc.data());
     });
   
     return alarms
