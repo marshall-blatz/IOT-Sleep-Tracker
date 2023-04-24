@@ -21,7 +21,6 @@ export default function Home() {
       })
     }, []);
 
-
     const renderAlarms = () => {
       if (Object.keys(alarms).length === 0){
         return(
@@ -46,7 +45,7 @@ export default function Home() {
                   <Typography>{alarms[key].alarmName}</Typography>
                 </Box>
                 <Box>
-                  <Switch />
+                  <Switch onChange={(event) => toggleAlarm(key, event.target.checked)}/>
                   <IconButton onClick={() => handleDeleteAlarm(key)}>
                     <ClearIcon color="primary"/>
                   </IconButton>
@@ -56,10 +55,6 @@ export default function Home() {
           </TableRow>
         )))
       }
-    }
-
-    async function handleDeleteAlarm(alarmId) {
-      await deleteAlarm(alarmId)
     }
 
     function formatTimeToAmPm(timestamp) {
@@ -76,8 +71,22 @@ export default function Home() {
       return `${formattedHours}:${formattedMinutes}${amPm}`;
     }
 
+    async function handleDeleteAlarm(alarmId) {
+      await deleteAlarm(alarmId)
+    }
+
     const handleSignOut = () => {
       console.log("Put sign out logic here")
+    }
+
+    function toggleAlarm(alarmId, status){
+      //check if toggling on or off
+      if(status){
+        fetch(`/api/alarm/on/${alarmId}`)
+      }
+      else {
+        fetch(`/api/alarm/off/${alarmId}`)
+      }
     }
 
   return (
