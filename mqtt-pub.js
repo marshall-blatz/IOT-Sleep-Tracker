@@ -2,7 +2,7 @@ const mqtt = require('mqtt');
 
 // MQTT broker URL and topic
 const brokerUrl = 'mqtt://broker.mqttdashboard.com'; 
-const topic = 'iot-project-sleep-data';
+const topic = 'iowa-iot-project/sleep-data';
 
 // MQTT client
 const client = mqtt.connect(brokerUrl);
