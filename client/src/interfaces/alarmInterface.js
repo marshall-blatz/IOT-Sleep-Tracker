@@ -6,9 +6,9 @@ export const createAlarm = async (userId, title, startTime, endTime) => {
     try {
       const docRef = await addDoc(collection(db, "Alarms"), {
         userId: userId,
-        title: title,
-        startTime: startTime,
-        endTime: endTime,
+        alarmName: title,
+        startTime: startTime.toDate(),
+        endTime: endTime.toDate(),
         isActive: false
       });
       console.log("Alarm written with ID: ", docRef.id);
@@ -19,7 +19,7 @@ export const createAlarm = async (userId, title, startTime, endTime) => {
   };
 
 
-  export const getUserAlarms = async (userId) => {
+export const getUserAlarms = async (userId) => {
     let alarms = []
     const alarmsRef = collection(db, "Alarms");
     const q = query(alarmsRef, where("userId", "==", userId), orderBy("endTime")); 
@@ -30,6 +30,6 @@ export const createAlarm = async (userId, title, startTime, endTime) => {
       alarms[id] = doc.data()
       //console.log(doc.id, " => ", doc.data());
     });
-  
+
     return alarms
   }

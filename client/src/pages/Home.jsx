@@ -1,28 +1,33 @@
 import {React, useState, useEffect} from 'react'
 import { getUserAlarms } from '../interfaces/alarmInterface';
 import { Box, Button, Typography, TableRow, TableCell, Stack, TableContainer, Table, TableBody, Switch, Divider, tableCellClasses, CircularProgress } from '@mui/material'
+import AlarmDialog from '../dialogs/alarmDialog';
+import { getFirstName } from '../interfaces/userInterface';
 
 export default function Home() {
     const [alarms, setAlarms] = useState([]);
-    const [username, setUsername] = useState("John")
+    const [firstName, setFirstName] = useState("")
     const [loading, setLoading] = useState(true)
+    const [dialog, setDialog] = useState(false)
 
     useEffect(() => {
       getUserAlarms("cfHTvZ3S41FWKmVZT8ZX").then(data => {
-        console.log(data)
         setAlarms(data)
         setLoading(false)
+      })
+      getFirstName("cfHTvZ3S41FWKmVZT8ZX").then(data => {
+        setFirstName(data)
       })
     }, []);
 
 
     const renderAlarms = () => {
       return(Object.keys(alarms).map(key => (
-        <TableRow key={key} sx={{ "&:last-child td, &:last-child th": { border: 0 }}}>
-          <TableCell component="th" scope="row">
-            <Divider color="white"/>
-            <Box sx={{display:"flex", flexDirection:"row", alignItems:"center"}}>
-              <Box sx={{color:"white", mr:"20px"}}>
+        <TableRow key={key} sx={{}}>
+          <TableCell component="th" scope="row" sx={{padding:"16px 16px 0 16px"}}>
+            <Divider color="white" sx={{mb:"20px"}}/>
+            <Box sx={{display:"flex", flexDirection:"row", alignItems:"center", justifyContent:"space-between"}}>
+              <Box sx={{color:"white", mr:"40px"}}>
                 <Typography variant="h4">{formatTimeToAmPm(alarms[key].startTime.seconds)} to {formatTimeToAmPm(alarms[key].endTime.seconds)}</Typography>
                 <Typography>{alarms[key].alarmName}</Typography>
               </Box>
@@ -58,10 +63,10 @@ export default function Home() {
                 <Table sx={{[`& .${tableCellClasses.root}`]: {borderBottom: "none"}}}>
                     <TableBody>
                         <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, overflow: "visible !important" }}>
-                          <TableCell component="th" scope="row" sx={{mb:"-30px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important" }}>
+                          <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important" }}>
                             <Box sx={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
-                              <Typography>Hello, {username}</Typography>
-                              <Button variant="contained" sx={{padding:"2px 5px", textTransform:"none"}}>New Alarm</Button>
+                              <Typography>Hello, {firstName}</Typography>
+                              <Button variant="contained" onClick={() => setDialog(true)} sx={{padding:"2px 5px", textTransform:"none"}}>Add Alarm</Button>
                             </Box>
                             <Typography variant="h3">Alarms</Typography>
                           </TableCell>
@@ -72,7 +77,7 @@ export default function Home() {
             </TableContainer>
         </Stack>
       }
-
+      <AlarmDialog dialog={dialog} setDialog={setDialog}/>
     </Box>
   )
 }
