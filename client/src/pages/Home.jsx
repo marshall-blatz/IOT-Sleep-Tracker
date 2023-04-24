@@ -4,8 +4,13 @@ import { Box, Button, Typography, TableRow, TableCell, Stack, TableContainer, Ta
 import ClearIcon from '@mui/icons-material/Clear';
 import AlarmDialog from '../dialogs/alarmDialog';
 import { getFirstName } from '../interfaces/userInterface';
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+
+    const { currentUser, logout, setError } = useAuth();
+    const navigate = useNavigate();
     const [alarms, setAlarms] = useState([]);
     const [firstName, setFirstName] = useState("")
     const [loading, setLoading] = useState(true)
@@ -16,10 +21,20 @@ export default function Home() {
         setAlarms(alarms)
         setLoading(false)
       })
-      getFirstName("kqdSCMB0ilur5daBOlzF").then(name => {
-        setFirstName(name)
+      getFirstName(currentUser.uid).then(data => {
+        setFirstName(data)
       })
-    }, []);
+    }, [currentUser]);
+
+    async function handleSignOut() {
+      try {
+        setError("");
+        await logout();
+        navigate("/login");
+      } catch {
+        setError("Failed to logout");
+      }
+    }
 
     const renderAlarms = () => {
       if (Object.keys(alarms).length === 0){
@@ -73,10 +88,6 @@ export default function Home() {
 
     async function handleDeleteAlarm(alarmId) {
       await deleteAlarm(alarmId)
-    }
-
-    const handleSignOut = () => {
-      console.log("Put sign out logic here")
     }
 
     async function toggleAlarm(alarmId, status){

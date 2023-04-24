@@ -2,7 +2,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth'; //connectAuthEmulator
 import { getFirestore } from "firebase/firestore"; //connectFirestoreEmulator
-import { getStorage } from "firebase/storage"
 
 // TODO: Add SDKs for Firebase products
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -29,9 +28,6 @@ export const auth = getAuth(app);
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
 // connectFirestoreEmulator(db, "localhost", 8080);
-
-// Initialize Cloud Storage and get a reference to the service
-export const storage = getStorage(app);
 
 // use auth elsewhere
 //export default auth;
