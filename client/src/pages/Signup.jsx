@@ -117,6 +117,7 @@ export default function Signup() {
                 }}
                 onSubmit={handleSubmit}
             >
+                <h1 className="heading" style={{fontSize: 75, fontWeight: 'bold', margin:'auto'}}>Sleep Tracker</h1>
                 <div
                     style={{
                         display: "flex",
@@ -127,43 +128,11 @@ export default function Signup() {
                     <TextField id="firstName" sx={{mb: '20px', width:'48%'}} label="First Name" variant="outlined"  value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
                     <TextField id="lastName" sx={{mb: '20px', width:'48%'}} label="Last Name" variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
                 </div>
-                <TextField id='email' sx={{mb: '20px'}} label='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
-                
+                <TextField id='email' sx={{mb: '20px'}} type='email' label='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
+                <TextField id='password' sx={{mb: '20px'}} type='password' label='Password' value={password} onChange={(e) => setPassword(e.target.value)}/>
+                <TextField id='confirmPassword' sx={{mb: '20px'}} type='password' label='Password Confirmation' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} error={confirmPassword !== password} helperText={confirmError}/>
+                <Button id='signup' variant='contained' type='submit' disabled={loading} style={{margin: '10px'}}>Signup</Button>
             </Box>
         </>
-        // <form onSubmit={handleSubmit}>
-        // <input
-        //     type="email"
-        //     placeholder="Email"
-        //     value={email}
-        //     onChange={(e) => setEmail(e.target.value)}
-        // />
-        // <input 
-        //     type="text"
-        //     placeholder='First Name'
-        //     value={firstName}
-        //     onChange={(e) => setFirstName(e.target.value)}
-        // />
-        // <input
-        //     type='text'
-        //     placeholder='Last Name'
-        //     value={lastName}
-        //     onChange={(e) => setLastName(e.target.value)}
-        // />
-        // <input
-        //     type="password"
-        //     placeholder="Password"
-        //     value={password}
-        //     onChange={(e) => setPassword(e.target.value)}
-        // />
-        // <input
-        //     type='password'
-        //     placeholder='Confirm Password'
-        //     value={confirmPassword}
-        //     onChange={(e) => setConfirmPassword(e.target.value)}
-        // />
-        // <button type="submit" disabled={ loading }>Signup</button>
-        // {/* {error && <p>{error}</p>} */}
-        // </form>
     );
 };
