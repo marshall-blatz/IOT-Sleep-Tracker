@@ -17,20 +17,20 @@ app.use(express.static(path.resolve(__dirname, '../client/public')));
 app.use(express.json())
 
 // Handle Toggle on alarms
-app.get('/api/alarm/on/:id', (req, res) => {
+app.post('/api/alarm/on/:id', (req, res) => {
     const alarmId = req.params.id;
     console.log("turning on:", alarmId)
     let subTopic = topic + "/on"
-    client.publish(subTopic, "put alarm info here")
+    client.publish(subTopic, JSON.stringify(req.body))
     return
 });
 
 // Handle Toggle off alarms
-app.get('/api/alarm/off/:id', (req, res) => {
+app.post('/api/alarm/off/:id', (req, res) => {
     const alarmId = req.params.id;
     console.log("turning off:", alarmId)
     let subTopic = topic + "/off"
-    client.publish(subTopic, "put alarm info here")
+    client.publish(subTopic, JSON.stringify(req.body))
     return
 });
 
