@@ -17,7 +17,7 @@ export default function Home() {
     const [dialog, setDialog] = useState(false)
 
     useEffect(() => {
-      getUserAlarms("kqdSCMB0ilur5daBOlzF").then(alarms => {
+      getUserAlarms(currentUser.uid).then(alarms => {
         setAlarms(alarms)
         setLoading(false)
       })
@@ -60,7 +60,7 @@ export default function Home() {
                   <Typography>{alarms[key].alarmName}</Typography>
                 </Box>
                 <Box>
-                  <Switch defaultChecked={alarms[key].isActive} onChange={(event) => toggleAlarm(key, event.target.checked)}/>
+                  <Switch defaultChecked={alarms[key].isActive} onChange={(event) => toggleAlarm(key, event.target.checked, alarms[key])}/>
                   <IconButton onClick={() => handleDeleteAlarm(key)}>
                     <ClearIcon color="primary"/>
                   </IconButton>
@@ -90,14 +90,35 @@ export default function Home() {
       await deleteAlarm(alarmId)
     }
 
-    async function toggleAlarm(alarmId, status){
+    async function toggleAlarm(alarmId, status, data){
       //check if toggling on or off
+      console.log(data)
       await setAlarmToggle(alarmId, status)
       if(status){
-        fetch(`/api/alarm/on/${alarmId}`)
+        fetch(`/api/alarm/on/${alarmId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            startTime: data.startTime,
+            endTime: data.endTime,
+            alarmName: data.alarmName
+          })
+        })
       }
       else {
-        fetch(`/api/alarm/off/${alarmId}`)
+        fetch(`/api/alarm/off/${alarmId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            startTime: data.startTime,
+            endTime: data.endTime,
+            alarmName: data.alarmName
+          })
+        })
       }
     }
 

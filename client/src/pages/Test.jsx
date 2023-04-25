@@ -1,14 +1,13 @@
 import {React, useState, useEffect} from 'react'
 
 export default function Test() {
-    const [data, setData] = useState(null);
+  const [data, setData] = useState(null);
 
-    useEffect(() => {
-      fetch("/api")
-        .then((res) => res.json())
-        .then((data) => setData(data.message));
-    }, []);
-
+  useEffect(() => {
+    fetch("/api")
+      .then((res) => res.json())
+      .then((data) => setData(data.message));
+  }, []);
     
   return (
     <div className="App">
