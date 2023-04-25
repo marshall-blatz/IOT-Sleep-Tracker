@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 const MIN_LENGTH = 6;
 
@@ -103,39 +106,64 @@ export default function Signup() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-        <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-        />
-        <input 
-            type="text"
-            placeholder='First Name'
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-        />
-        <input
-            type='text'
-            placeholder='Last Name'
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-        />
-        <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-            type='password'
-            placeholder='Confirm Password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <button type="submit" disabled={ loading }>Signup</button>
-        {/* {error && <p>{error}</p>} */}
-        </form>
+        <>
+            <Box
+                component="form"
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    margin: "auto",
+                    width: "50%"
+                }}
+                onSubmit={handleSubmit}
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between"
+                    }}
+                >
+                    <TextField id="firstName" sx={{mb: '20px', width:'48%'}} label="First Name" variant="outlined"  value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
+                    <TextField id="lastName" sx={{mb: '20px', width:'48%'}} label="Last Name" variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
+                </div>
+                <TextField id='email' sx={{mb: '20px'}} label='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
+                
+            </Box>
+        </>
+        // <form onSubmit={handleSubmit}>
+        // <input
+        //     type="email"
+        //     placeholder="Email"
+        //     value={email}
+        //     onChange={(e) => setEmail(e.target.value)}
+        // />
+        // <input 
+        //     type="text"
+        //     placeholder='First Name'
+        //     value={firstName}
+        //     onChange={(e) => setFirstName(e.target.value)}
+        // />
+        // <input
+        //     type='text'
+        //     placeholder='Last Name'
+        //     value={lastName}
+        //     onChange={(e) => setLastName(e.target.value)}
+        // />
+        // <input
+        //     type="password"
+        //     placeholder="Password"
+        //     value={password}
+        //     onChange={(e) => setPassword(e.target.value)}
+        // />
+        // <input
+        //     type='password'
+        //     placeholder='Confirm Password'
+        //     value={confirmPassword}
+        //     onChange={(e) => setConfirmPassword(e.target.value)}
+        // />
+        // <button type="submit" disabled={ loading }>Signup</button>
+        // {/* {error && <p>{error}</p>} */}
+        // </form>
     );
 };
