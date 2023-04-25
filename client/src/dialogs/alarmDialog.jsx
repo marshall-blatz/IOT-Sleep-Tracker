@@ -6,8 +6,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { createAlarm } from '../interfaces/alarmInterface';
+import { useAuth } from "../contexts/AuthContext";
 
 export default function AlarmDialog(props) {
+    const { currentUser } = useAuth();
     const [alarmName, setAlarmName] = useState("")
     const [startTime, setStartTime] = useState(dayjs('2023-04-20T6:30'))
     const [endTime, setEndTime] = useState(dayjs('2023-04-20T8:30'))
@@ -28,7 +30,7 @@ export default function AlarmDialog(props) {
             setTimeError(true)
             return
         }
-        await createAlarm("kqdSCMB0ilur5daBOlzF", alarmName, startTime, endTime,)
+        await createAlarm(currentUser.uid, alarmName, startTime, endTime,)
         handleClose()
         window.location.reload();
     }
