@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 const MIN_LENGTH = 6;
 
@@ -103,39 +106,33 @@ export default function Signup() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-        <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-        />
-        <input 
-            type="text"
-            placeholder='First Name'
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-        />
-        <input
-            type='text'
-            placeholder='Last Name'
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-        />
-        <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-            type='password'
-            placeholder='Confirm Password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <button type="submit" disabled={ loading }>Signup</button>
-        {/* {error && <p>{error}</p>} */}
-        </form>
+        <>
+            <Box
+                component="form"
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    margin: "auto",
+                    width: "50%"
+                }}
+                onSubmit={handleSubmit}
+            >
+                <h1 className="heading" style={{fontSize: 75, fontWeight: 'bold', margin:'auto'}}>Sleep Tracker</h1>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between"
+                    }}
+                >
+                    <TextField id="firstName" sx={{mb: '20px', width:'48%'}} label="First Name" variant="outlined"  value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
+                    <TextField id="lastName" sx={{mb: '20px', width:'48%'}} label="Last Name" variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
+                </div>
+                <TextField id='email' sx={{mb: '20px'}} type='email' label='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
+                <TextField id='password' sx={{mb: '20px'}} type='password' label='Password' value={password} onChange={(e) => setPassword(e.target.value)}/>
+                <TextField id='confirmPassword' sx={{mb: '20px'}} type='password' label='Password Confirmation' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} error={confirmPassword !== password} helperText={confirmError}/>
+                <Button id='signup' variant='contained' type='submit' disabled={loading} style={{margin: '10px'}}>Signup</Button>
+            </Box>
+        </>
     );
 };
