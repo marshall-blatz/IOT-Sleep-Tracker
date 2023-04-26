@@ -6,6 +6,7 @@ import AlarmDialog from '../dialogs/alarmDialog';
 import { getFirstName } from '../interfaces/userInterface';
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import HrmGraph from '../components/HrmGraph';
 
 export default function Home() {
 
@@ -128,27 +129,32 @@ export default function Home() {
         loading?
         <CircularProgress/>
         :
-        <>
-        <Stack>
-            <TableContainer>
-                <Table sx={{[`& .${tableCellClasses.root}`]: {borderBottom: "none"}}}>
-                    <TableBody>
-                        <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, overflow: "visible !important" }}>
-                          <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important", minWidth:"400px"}}>
-                            <Box sx={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
-                              <Typography>Hello, {firstName}</Typography>
-                              <Button variant="contained" onClick={() => setDialog(true)} sx={{padding:"2px 5px", textTransform:"none"}}>Add Alarm</Button>
-                            </Box>
-                            <Typography variant="h3">Alarms</Typography>
-                          </TableCell>
-                        </TableRow>
-                        {renderAlarms()}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Stack>
-        <Button onClick={handleSignOut} sx={{textDecoration:"underline", textTransform:"none"}}>Sign out</Button>
-        </>
+        <Box sx={{display:"flex", flexDirection:"row"}}>
+          <Box>
+            <Stack>
+                <TableContainer>
+                    <Table sx={{[`& .${tableCellClasses.root}`]: {borderBottom: "none"}}}>
+                        <TableBody>
+                            <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, overflow: "visible !important" }}>
+                              <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important", minWidth:"400px"}}>
+                                <Box sx={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+                                  <Typography>Hello, {firstName}</Typography>
+                                  <Button variant="contained" onClick={() => setDialog(true)} sx={{padding:"2px 5px", textTransform:"none"}}>Add Alarm</Button>
+                                </Box>
+                                <Typography variant="h3">Alarms</Typography>
+                              </TableCell>
+                            </TableRow>
+                            {renderAlarms()}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Stack>
+            <Button onClick={handleSignOut} sx={{textDecoration:"underline", textTransform:"none"}}>Sign out</Button>
+          </Box>
+          <Box>
+            <HrmGraph/>
+          </Box>
+        </Box>
       }
       <AlarmDialog dialog={dialog} setDialog={setDialog}/>
     </Box>
