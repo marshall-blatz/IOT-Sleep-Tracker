@@ -6,7 +6,8 @@ import AlarmDialog from '../dialogs/alarmDialog';
 import { getFirstName } from '../interfaces/userInterface';
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import HrmGraph from '../components/HrmGraph';
+import Graph from '../components/HrmGraph';
+
 
 export default function Home() {
 
@@ -130,7 +131,7 @@ export default function Home() {
         <CircularProgress/>
         :
         <Box sx={{display:"flex", flexDirection:"row"}}>
-          <Box>
+          <Box sx={{display:"flex", flexDirection:"column"}}>
             <Stack>
                 <TableContainer>
                     <Table sx={{[`& .${tableCellClasses.root}`]: {borderBottom: "none"}}}>
@@ -151,8 +152,8 @@ export default function Home() {
             </Stack>
             <Button onClick={handleSignOut} sx={{textDecoration:"underline", textTransform:"none"}}>Sign out</Button>
           </Box>
-          <Box>
-            <HrmGraph/>
+          <Box sx={{width:"600px"}}>
+            <Graph/>
           </Box>
         </Box>
       }

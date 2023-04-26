@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Chart from 'chart.js/auto';
 
 const Graph = () => {
   const chartRef = useRef();
+  const [data, setData] = useState([]); // State to store the data points
 
   useEffect(() => {
     // Create a new chart using the chartRef canvas element
@@ -12,10 +13,10 @@ const Graph = () => {
             labels: [], // Array to store labels (x-axis)
             datasets: [
             {
-                label: 'Data', // Label for the data series
+                label: 'Current Heart Rate', // Label for the data series
                 data: [], // Array to store data points (y-axis)
                 backgroundColor: 'rgba(75, 192, 192, 0.2)', // Background color for the data series
-                borderColor: 'rgba(75, 192, 192, 1)', // Border color for the data series
+                borderColor: 'rgb(66, 165, 245, 1)', // Border color for the data series
                 borderWidth: 1 // Border width for the data series
             }
             ]
@@ -23,13 +24,22 @@ const Graph = () => {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-            y: {
-                beginAtZero: true // Start the y-axis from zero
+            annotation: {
+                annotations: [{
+                    type: 'line',
+                    mode: 'horizontal',
+                    scaleID: 'y-axis-0',
+                    value: 100,
+                    borderColor: 'rgb(66, 165, 245, 1)',
+                    borderWidth: 4,
+                    label: {
+                        enabled: true,
+                        content: 'Test label'
+                    }
+                }]
             }
-            }
-        }
-        });
+        },
+    });
 
     // Function to add a new data point to the graph
     const addDataPoint = (label, data) => {
@@ -38,23 +48,27 @@ const Graph = () => {
       chart.update();
     };
 
-    // Call the addDataPoint function every 2 seconds
-    const interval = setInterval(() => {
-      const label = new Date().toLocaleTimeString(); // Use current time as label
-      const data = Math.random() * 100;
-      addDataPoint(label, data);
-    }, 2000);
+    // Set up a WebSocket connection to the server
+    const socket = new WebSocket('ws://localhost:3001');
+
+    // Listen for incoming messages from the server
+    socket.addEventListener('message', event => {
+        const data = JSON.parse(event.data);
+        const label = new Date().toLocaleTimeString();
+        setData(data); // Update the state with the new data points
+        addDataPoint(label, data); // Add the new data point to the graph
+    });
 
     // Return a function to clean up the interval when the component unmounts
     return () => {
-      clearInterval(interval);
-      chart.destroy();
+        socket.close()
+        chart.destroy();
     };
   }, []);
 
   return (
-    <div>
-      <canvas ref={chartRef} />
+    <div style={{height:"100%", width:"100%"}}>
+      <canvas ref={chartRef}/>
     </div>
   );
 };
