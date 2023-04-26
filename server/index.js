@@ -47,8 +47,3 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
-
-// Disconnect from the MQTT broker when done
-// setTimeout(() => {
-//     client.end();
-// }, 60000); // The timeout (in milliseconds) will adjust the duration of publishing (only runs for a minute right now)
