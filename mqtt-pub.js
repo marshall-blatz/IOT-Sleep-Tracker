@@ -2,8 +2,8 @@ const mqtt = require('mqtt');
 
 const MQTT_SERVER = 'mqtt://broker.mqttdashboard.com'; 
 const MQTT_TOPIC = 'iowa-iot-project/sleep-data';
-const RANGE_MIN = 80; // Minimum value of the range
-const RANGE_MAX = 120; // Maximum value of the range
+const RANGE_MIN = 60; // Minimum value of the range
+const RANGE_MAX = 110; // Maximum value of the range
 const PUBLISH_INTERVAL_MS = 2000; // Interval in milliseconds to publish the number
 
 // Calculate the middle value of the range

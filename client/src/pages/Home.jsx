@@ -1,13 +1,16 @@
 import {React, useState, useEffect} from 'react'
-import { deleteAlarm, getUserAlarms, setAlarmToggle } from '../interfaces/alarmInterface';
-import { Box, Button, Typography, TableRow, TableCell, Stack, TableContainer, Table, TableBody, Switch, Divider, tableCellClasses, CircularProgress, IconButton } from '@mui/material'
+import { deleteAlarm, getUserAlarms, setAlarmToggle, deactivateAlarms } from '../interfaces/alarmInterface';
+import { Box, Button, Typography, TableRow, TableCell, Stack, TableContainer, Table, TableBody, Switch, Divider, tableCellClasses, CircularProgress, IconButton, createTheme, ThemeProvider } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear';
 import AlarmDialog from '../dialogs/alarmDialog';
-import { getFirstName } from '../interfaces/userInterface';
+import { getUserData } from '../interfaces/userInterface';
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Graph from '../components/HrmGraph';
+import HrDialog from '../dialogs/hrDialog';
+import BeepDialog from '../dialogs/beepDialog';
 
+const darkTheme = createTheme({ palette: { mode: "dark" } });
 
 export default function Home() {
 
@@ -16,17 +19,47 @@ export default function Home() {
     const [alarms, setAlarms] = useState([]);
     const [firstName, setFirstName] = useState("")
     const [loading, setLoading] = useState(true)
-    const [dialog, setDialog] = useState(false)
+    const [alarmDialog, setAlarmDialog] = useState(false)
+    const [hrDialog, setHrDialog] = useState(false)
+    const [beepDialog, setBeepDialog] = useState(false)
+    const [heartRate, setHeartRate] = useState(85)
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [switches, setSwitches] = useState([])
 
     useEffect(() => {
       getUserAlarms(currentUser.uid).then(alarms => {
+        console.log(alarms)
         setAlarms(alarms)
         setLoading(false)
+        let data = []
+        for(let key in alarms){
+          data.push(alarms[key].isActive)
+        }
+        setSwitches(data)
       })
-      getFirstName(currentUser.uid).then(data => {
-        setFirstName(data)
+      getUserData(currentUser.uid).then(data => {
+        setFirstName(data.firstName)
+        setHeartRate(data.restingBpm)
       })
+
+      // Set up a WebSocket connection to the server
+      const socket = new WebSocket('ws://localhost:3001');
+
+      // Listen for incoming messages from the server
+      socket.addEventListener('message', event => {
+        let values = JSON.parse(event.data)
+        if(values.event === "beep"){
+          console.log("beep")
+          setBeepDialog(true)
+        }
+      });
+
+      const interval = setInterval(() => {
+        setCurrentTime(new Date());
+      }, 1000);
+      return () => clearInterval(interval);
     }, [currentUser]);
+
 
     async function handleSignOut() {
       try {
@@ -93,11 +126,12 @@ export default function Home() {
     }
 
     async function toggleAlarm(alarmId, status, data){
+      await deactivateAlarms()
       //check if toggling on or off
       console.log(data)
       await setAlarmToggle(alarmId, status)
       if(status){
-        fetch(`/api/alarm/on/${alarmId}`, {
+        fetch(`/api/alarm/on`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -105,12 +139,13 @@ export default function Home() {
           body: JSON.stringify({
             startTime: data.startTime,
             endTime: data.endTime,
-            alarmName: data.alarmName
+            alarmName: data.alarmName,
+            restingHr: heartRate
           })
         })
       }
       else {
-        fetch(`/api/alarm/off/${alarmId}`, {
+        fetch(`/api/alarm/off`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -122,42 +157,59 @@ export default function Home() {
           })
         })
       }
+      window.location.reload()
     }
-
+  //   <Box sx={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+  //   <FormLabel>Resting Heart Rate:</FormLabel>
+  //   <TextField id="outlined-basic" variant='standard' sx={{mx:"20px"}}/>
+  //   <Button variant="contained" onClick={() => setDialog(true)} sx={{padding:"0", textTransform:"none"}}>Set</Button>
+  // </Box>
   return (
     <Box sx={{backgroundColor:"#282c34", minHeight:"100vh", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", pb:"100px"}}>
+      <ThemeProvider theme={darkTheme}>
       {
         loading?
         <CircularProgress/>
         :
-        <Box sx={{display:"flex", flexDirection:"row"}}>
-          <Box sx={{display:"flex", flexDirection:"column"}}>
-            <Stack>
-                <TableContainer>
-                    <Table sx={{[`& .${tableCellClasses.root}`]: {borderBottom: "none"}}}>
-                        <TableBody>
-                            <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, overflow: "visible !important" }}>
-                              <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important", minWidth:"400px"}}>
-                                <Box sx={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
-                                  <Typography>Hello, {firstName}</Typography>
-                                  <Button variant="contained" onClick={() => setDialog(true)} sx={{padding:"2px 5px", textTransform:"none"}}>Add Alarm</Button>
-                                </Box>
-                                <Typography variant="h3">Alarms</Typography>
-                              </TableCell>
-                            </TableRow>
-                            {renderAlarms()}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Stack>
-            <Button onClick={handleSignOut} sx={{textDecoration:"underline", textTransform:"none"}}>Sign out</Button>
+        <Box sx={{color:"white", display:"flex", flexDirection:"column", alignItems:"center"}}>
+          <Box sx={{display:"flex", flexDirection:"column", alignItems:"center", mb:"20px"}}>
+            <Typography variant='h2'>Hello, {firstName}</Typography>
+            <Typography variant="h5">Current Time: {currentTime.toLocaleTimeString()}</Typography>
+            <Box sx={{display:"flex", flexDirection:"row", alignItems:"center", mt:"-30px"}}>
+              <Button onClick={() => setHrDialog(true)} sx={{mt:"30px", textDecoration:"underline", textTransform:"none"}}>{heartRate} BPM</Button>
+              <Button onClick={handleSignOut} sx={{mt:"30px", textDecoration:"underline", textTransform:"none"}}>Sign out</Button>
+            </Box>
           </Box>
-          <Box sx={{width:"600px"}}>
-            <Graph/>
+          <Box sx={{display:"flex", flexDirection:"row"}}>
+            <Box sx={{display:"flex", flexDirection:"column"}}>
+              <Stack>
+                  <TableContainer>
+                      <Table sx={{[`& .${tableCellClasses.root}`]: {borderBottom: "none"}}}>
+                          <TableBody>
+                              <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, overflow: "visible !important" }}>
+                                <TableCell component="th" scope="row" sx={{mb:"-20px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"white", overflow: "visible !important", minWidth:"400px"}}>
+                                  <Box sx={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+                                    <Typography variant="h3">Alarms</Typography>
+                                    <Button variant="contained" onClick={() => setAlarmDialog(true)} sx={{padding:"2px 5px", textTransform:"none"}}>Add Alarm</Button>
+                                  </Box>
+                                </TableCell>
+                              </TableRow>
+                              {renderAlarms(alarms)}
+                          </TableBody>
+                      </Table>
+                  </TableContainer>
+              </Stack>
+            </Box>
+            <Box sx={{ml:"20px", minWidth:"600px"}}>
+                <Graph style={{height:"100%"}}/>
+            </Box>
           </Box>
         </Box>
       }
-      <AlarmDialog dialog={dialog} setDialog={setDialog}/>
+      </ThemeProvider>
+      <HrDialog dialog={hrDialog} setDialog={setHrDialog}/>
+      <AlarmDialog dialog={alarmDialog} setDialog={setAlarmDialog}/>
+      <BeepDialog dialog={beepDialog} setDialog={setBeepDialog}/>
     </Box>
   )
 }

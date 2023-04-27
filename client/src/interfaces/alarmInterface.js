@@ -1,5 +1,5 @@
 import { db } from "../config/firebase";
-import { doc, deleteDoc, addDoc, setDoc, query, where, getDocs, collection, orderBy } from "firebase/firestore";
+import { doc, deleteDoc, addDoc, setDoc, query, where, getDocs, collection, orderBy, writeBatch } from "firebase/firestore";
 
 export const createAlarm = async (userId, title, startTime, endTime) => {
   if (userId === "") return;
@@ -54,4 +54,15 @@ export const getUserAlarms = async (userId) => {
     //console.log(doc.id, " => ", doc.data());
   });
   return alarms
+}
+
+export const deactivateAlarms = async () => {
+  const alarmsRef = collection(db, "Alarms")
+  const snapshot = await getDocs(alarmsRef)
+  const batch = writeBatch(db)
+  snapshot.forEach((doc) => {
+    batch.update(doc.ref, { isActive: false });
+  });
+
+  await batch.commit();
 }

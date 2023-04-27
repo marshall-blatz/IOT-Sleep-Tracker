@@ -30,7 +30,7 @@ export default function AlarmDialog(props) {
             setTimeError(true)
             return
         }
-        await createAlarm(currentUser.uid, alarmName, startTime, endTime,)
+        await createAlarm(currentUser.uid, alarmName, startTime, endTime)
         handleClose()
         window.location.reload();
     }

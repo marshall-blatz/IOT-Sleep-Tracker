@@ -24,20 +24,6 @@ const Graph = () => {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            annotation: {
-                annotations: [{
-                    type: 'line',
-                    mode: 'horizontal',
-                    scaleID: 'y-axis-0',
-                    value: 100,
-                    borderColor: 'rgb(66, 165, 245, 1)',
-                    borderWidth: 4,
-                    label: {
-                        enabled: true,
-                        content: 'Test label'
-                    }
-                }]
-            }
         },
     });
 
@@ -53,10 +39,13 @@ const Graph = () => {
 
     // Listen for incoming messages from the server
     socket.addEventListener('message', event => {
-        const data = JSON.parse(event.data);
+      let values = JSON.parse(event.data)
+      if(values.event === "graph"){
+        const data = JSON.parse(values.data);
         const label = new Date().toLocaleTimeString();
         setData(data); // Update the state with the new data points
         addDataPoint(label, data); // Add the new data point to the graph
+      }
     });
 
     // Return a function to clean up the interval when the component unmounts
